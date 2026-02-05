@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useTaskQueue } from "@/hooks/useTaskQueue";
 import { Button } from "@/components/ui/button";
@@ -92,7 +92,7 @@ const steps = [
   { id: 4, title: "生成预览", icon: Play },
 ];
 
-export default function CreatePage() {
+function CreatePageContent() {
   const searchParams = useSearchParams();
   const projectIdParam = searchParams.get("id");
 
@@ -2801,5 +2801,14 @@ export default function CreatePage() {
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+// Wrap in Suspense to fix useSearchParams build error in Next.js 14.1+
+export default function CreatePage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div></div>}>
+      <CreatePageContent />
+    </Suspense>
   );
 }
